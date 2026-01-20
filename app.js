@@ -4,7 +4,7 @@ import express from "express";
 import postsRouter from "./routers/posts.js";
 
 import errorHandler from "./middlewares/errorHandler.js";
-import notFound from "./middlewares/notFound.js"
+// import notFound from "./middlewares/notFound.js"
 
 
 const app = express();
@@ -35,7 +35,7 @@ app.use("/posts", postsRouter);
 app.use(errorHandler);
 
 // middleware not found
-app.use(notFound);
+// app.use(notFound);
 
 app.listen(port, () => {
     console.log("funziona");

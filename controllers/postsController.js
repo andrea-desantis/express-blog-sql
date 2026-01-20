@@ -1,27 +1,61 @@
-import dino from "../dino.js";
+// import dino from "../dino.js";
+
+
+import connection from "../data/db.js";
+
+
 // ----------INDEX----------
 function index(req, res) {
 
-    const dinoIndex = dino.map(({ id, title }) => ({ id, title }));
+    // const dinoIndex = dino.map(({ id, title }) => ({ id, title }));
+    // res.send(dinoIndex);
 
-    res.send(dinoIndex);
+    const query = "SELECT * FROM `posts`;"
+    connection.query(query, (err, result) => {
+        if(err) {
+            res.status(500);
+            return res.json({
+                message: "internal server error",
+            });
+        }
+        res.json({
+            results: result,
+        });
+    });
 }
 
 // ----------SHOW----------
 function show(req, res) {
     const id = parseInt(req.params.id);
-    const dinosauro = dino.find((dino) => dino.id === id);
-
-
-    if (dinosauro !== undefined) {
-        res.json(dinosauro);
-    } else {
-        res.status(404);
-        res.json({
-            error: "Not Found",
-            message: "Dinosauro non trovato"
-        })
-    }
+    // const dinosauro = dino.find((dino) => dino.id === id);
+    // if (dinosauro !== undefined) {
+    //     res.json(dinosauro);
+    // } else {
+    //     res.status(404);
+    //     res.json({
+    //         error: "Not Found",
+    //         message: "Dinosauro non trovato"
+    //     })
+    // }
+    const query = "SELECT * FROM `posts` WHERE `posts`.`id` = ?;"
+    connection.query(query, [id], (err, result) => {
+        if(err) {
+            res.status(500);
+            return res.json({
+                message:"internal server error",
+            });
+        }
+        if (result.length === 0){
+            res.status(404);
+            res.json({
+                message: "Not Found"
+            });
+        } else {
+            const dolce = result[0];
+            res.json(dolce);
+        }
+        
+    });
 }
 
 // ----------STORE----------
@@ -83,21 +117,33 @@ function modify(req, res) {
 
 // ----------DESTROY----------
 function destroy(req, res) {
-    const id = parseInt(req.params.id);
+    // const id = parseInt(req.params.id);
+    // const index = dino.findIndex((dinosauro) => dinosauro.id === id);
+    // // id non trovato\\
+    // if (index === -1) {
+    //     res.status(404);
+    //     res.json({
+    //         error: "Not Found",
+    //         message: "Dinosauro non trovato"
+    //     });
+    // } else { //rimuovo l'elemento
+    //     dino.splice(index, 1);
+    //     res.sendStatus(204)
+    // }
+    const id= req.params.id;
 
-    const index = dino.findIndex((dinosauro) => dinosauro.id === id);
+    const query = "DELETE FROM `posts` WHERE id = ?"
+    connection.query(query, [id], (err) => {
+        if(err) {
+            res.status(500);
+            return res.json({
+                message:"internal server error",
+            });
+        }
+        res.sendStatus(204);
+    });
 
-    // id non trovato\\
-    if (index === -1) {
-        res.status(404);
-        res.json({
-            error: "Not Found",
-            message: "Dinosauro non trovato"
-        });
-    } else { //rimuovo l'elemento
-        dino.splice(index, 1);
-        res.sendStatus(204)
-    }
+    
 }
 
 const controller = {

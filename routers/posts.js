@@ -1,5 +1,5 @@
 import express from "express";
-import dino from "../dino.js";
+// import dino from "../dino.js";
 
 import postsController from '../controllers/postsController.js'
 
